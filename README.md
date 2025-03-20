@@ -1,0 +1,1 @@
+`crtl+a then c` opens qemu debug, then entering `q` exits.
