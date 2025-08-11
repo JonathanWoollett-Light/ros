@@ -128,9 +128,21 @@ class RISCVDevelopment:
         """Install QEMU for RISC-V"""
         self.log("Installing QEMU for RISC-V...")
         self.run_command("sudo apt update")
-        self.run_command("sudo apt install -y qemu-system-riscv64 qemu-utils")
-        self.log("✓ QEMU installed successfully")
+        self.run_command("sudo apt install -y qemu-system-riscv64 qemu-utils gdb-multiarch")
+        self.log("✓ QEMU and GDB installed successfully")
     
+    def create_gdb_wrapper(self):
+        """Create GDB wrapper script that uses system gdb-multiarch"""
+        wrapper_content = """#!/bin/bash
+    # GDB wrapper for RISC-V debugging
+    exec gdb-multiarch "$@"
+    """
+        wrapper_path = self.bin_dir / "riscv64-unknown-elf-gdb"
+        with open(wrapper_path, "w") as f:
+            f.write(wrapper_content)
+        wrapper_path.chmod(0o755)
+        self.log("✓ Created GDB wrapper using system gdb-multiarch")
+
     def extract_toolchain_binaries(self):
         """Extract specific binaries from toolchain archive"""
         self.log("Extracting RISC-V toolchain binaries...")
@@ -138,7 +150,7 @@ class RISCVDevelopment:
         archive_path = self.toolchain_dir / self.toolchain_archive
         extract_path = self.toolchain_dir / "extracted"
         
-        binaries = ["as", "ld", "objcopy", "gdb", "objdump", "nm", "readelf"]
+        binaries = ["as", "ld", "objcopy", "objdump", "nm", "readelf"]
         
         with tarfile.open(archive_path, 'r:xz') as tar:
             members = tar.getnames()
@@ -184,6 +196,9 @@ class RISCVDevelopment:
         
         # Install QEMU
         self.install_qemu()
+
+        # Create GDB wrapper since it's not in the release
+        self.create_gdb_wrapper()
         
         self.log("✓ Installation complete!", "green")
         self.log("", "")
