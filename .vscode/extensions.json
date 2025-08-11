@@ -1,0 +1,10 @@
+{
+    "recommendations": [
+        "webfreak.debug",
+        "ms-vscode.cpptools",
+        "zhwu95.riscv"
+    ],
+    "unwantedRecommendations": [
+        "ms-vscode.cmake-tools"
+    ]
+}

@@ -1,0 +1,30 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "Debug RISC-V Boot Chain",
+            "type": "gdb",
+            "request": "attach",
+            "executable": "${workspaceFolder}/build/bin/bios.elf",
+            "target": "localhost:1234",
+            "remote": true,
+            "cwd": "${workspaceFolder}",
+            "gdbpath": "${workspaceFolder}/build/bin/riscv64-unknown-elf-gdb",
+            "autorun": [
+                "set architecture riscv:rv64",
+                "add-symbol-file build/bin/stage1_bootloader.elf 0x80000000",
+                "add-symbol-file build/bin/stage2_bootloader.elf 0x80100000", 
+                "add-symbol-file build/bin/kernel.elf 0x80200000",
+                "break *0x1000",
+                "break *0x80000000",
+                "break *0x80100000",
+                "break *0x80200000"
+            ],
+            "stopAtEntry": false,
+            "valuesFormatting": "parseText",
+            "showDevDebugOutput": true,
+            "printCalls": false,
+            "preLaunchTask": "build-debug"
+        }
+    ]
+}
